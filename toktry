@@ -5,7 +5,7 @@ local playerGui = LocalPlayer:WaitForChild("PlayerGui")
 local hud = playerGui:WaitForChild("HUD", 5)
 
 if hud then
-    local bottomLeft = hud:WaitForChild("BottomLeft", 5)
+   local bottomLeft = hud:WaitForChild("BottomLeft", 5)
     
     if bottomLeft then
         local tradeTokens = bottomLeft:WaitForChild("TradeTokens", 5)
