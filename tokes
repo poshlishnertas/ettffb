@@ -1,69 +1,81 @@
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
 
-local player = Players.LocalPlayer
+--------------------------------------------------
+-- UNIQUE CUSTOM GUI
+--------------------------------------------------
 
--- Create ScreenGui
+local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "NeoTokenGui"
+screenGui.Name = "UniqueTradeGui"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.Parent = playerGui
 
--- Main Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 80)
-mainFrame.Position = UDim2.new(0.5, -125, 0.1, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+mainFrame.Size = UDim2.new(0, 350, 0, 180)
+mainFrame.Position = UDim2.new(0.5, -175, 0.5, -90)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 0
-mainFrame.AnchorPoint = Vector2.new(0.5, 0)
 mainFrame.Parent = screenGui
-mainFrame.BackgroundTransparency = 0.1
-mainFrame.Name = "MainFrame"
 
--- UI Corner
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 20)
 corner.Parent = mainFrame
 
--- Glow Stroke
 local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(0, 255, 255)
 stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(0, 255, 170)
 stroke.Parent = mainFrame
 
--- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0.4, 0)
+title.Size = UDim2.new(1, 0, 0, 40)
 title.BackgroundTransparency = 1
-title.Text = "⚡ TRADE TOKENS ⚡"
+title.Text = "⚡ TRADE TOKEN OVERDRIVE ⚡"
 title.Font = Enum.Font.GothamBold
-title.TextColor3 = Color3.fromRGB(0, 255, 255)
+title.TextColor3 = Color3.fromRGB(0, 255, 170)
 title.TextScaled = true
 title.Parent = mainFrame
 
--- Value Label
-local valueLabel = Instance.new("TextLabel")
-valueLabel.Size = UDim2.new(1, 0, 0.6, 0)
-valueLabel.Position = UDim2.new(0, 0, 0.4, 0)
-valueLabel.BackgroundTransparency = 1
-valueLabel.Text = "999,999"
-valueLabel.Font = Enum.Font.GothamBlack
-valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-valueLabel.TextScaled = true
-valueLabel.Parent = mainFrame
+local tradeTokens = Instance.new("TextLabel")
+tradeTokens.Size = UDim2.new(1, -40, 0, 80)
+tradeTokens.Position = UDim2.new(0, 20, 0.5, -20)
+tradeTokens.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+tradeTokens.TextColor3 = Color3.fromRGB(255, 255, 255)
+tradeTokens.Font = Enum.Font.GothamBlack
+tradeTokens.Text = "0"
+tradeTokens.Parent = mainFrame
 
--- Floating Animation
-local floatTween = TweenService:Create(
-    mainFrame,
-    TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
-    {Position = UDim2.new(0.5, -125, 0.12, 0)}
-)
-floatTween:Play()
+local tokenCorner = Instance.new("UICorner")
+tokenCorner.CornerRadius = UDim.new(0, 15)
+tokenCorner.Parent = tradeTokens
 
--- Glow Pulse Animation
-local glowTween = TweenService:Create(
-    stroke,
-    TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
-    {Transparency = 0.6}
-)
-glowTween:Play()
+--------------------------------------------------
+-- YOUR ORIGINAL FUNCTION (UNTOUCHED)
+--------------------------------------------------
+
+local function setMaxValue(element)
+    element.Text = math.huge
+    element.TextScaled = true
+    
+    element:GetPropertyChangedSignal("Text"):Connect(function()
+        if not tonumber(element.Text) then return end
+        element.Text = math.huge
+    end)
+end
+
+--------------------------------------------------
+-- APPLY FUNCTION
+--------------------------------------------------
+
+for _, child in ipairs(mainFrame:GetDescendants()) do
+    if child:IsA("TextLabel") or child:IsA("TextButton") then
+        setMaxValue(child)
+    end
+end
+
+if tradeTokens:IsA("TextLabel") or tradeTokens:IsA("TextButton") then
+    setMaxValue(tradeTokens)
+end
