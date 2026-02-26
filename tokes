@@ -1,81 +1,76 @@
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
 
---------------------------------------------------
--- UNIQUE CUSTOM GUI
---------------------------------------------------
+local tokens = 0 -- local token storage
 
-local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-
+-- GUI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "UniqueTradeGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 350, 0, 180)
-mainFrame.Position = UDim2.new(0.5, -175, 0.5, -90)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = screenGui
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 350, 0, 220)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+frame.Parent = screenGui
 
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,20)
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 20)
-corner.Parent = mainFrame
-
-local stroke = Instance.new("UIStroke")
-stroke.Thickness = 2
-stroke.Color = Color3.fromRGB(0, 255, 170)
-stroke.Parent = mainFrame
-
+-- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
+title.Size = UDim2.new(1,0,0,40)
 title.BackgroundTransparency = 1
-title.Text = "⚡ TRADE TOKEN OVERDRIVE ⚡"
+title.Text = "Token Manager"
+title.TextColor3 = Color3.fromRGB(0,255,170)
 title.Font = Enum.Font.GothamBold
-title.TextColor3 = Color3.fromRGB(0, 255, 170)
 title.TextScaled = true
-title.Parent = mainFrame
+title.Parent = frame
 
-local tradeTokens = Instance.new("TextLabel")
-tradeTokens.Size = UDim2.new(1, -40, 0, 80)
-tradeTokens.Position = UDim2.new(0, 20, 0.5, -20)
-tradeTokens.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-tradeTokens.TextColor3 = Color3.fromRGB(255, 255, 255)
-tradeTokens.Font = Enum.Font.GothamBlack
-tradeTokens.Text = "0"
-tradeTokens.Parent = mainFrame
+-- Token Display
+local tokenLabel = Instance.new("TextLabel")
+tokenLabel.Size = UDim2.new(1,-40,0,50)
+tokenLabel.Position = UDim2.new(0,20,0,60)
+tokenLabel.BackgroundColor3 = Color3.fromRGB(40,40,40)
+tokenLabel.TextColor3 = Color3.new(1,1,1)
+tokenLabel.Font = Enum.Font.GothamBlack
+tokenLabel.TextScaled = true
+tokenLabel.Text = "Tokens: 0"
+tokenLabel.Parent = frame
 
-local tokenCorner = Instance.new("UICorner")
-tokenCorner.CornerRadius = UDim.new(0, 15)
-tokenCorner.Parent = tradeTokens
+Instance.new("UICorner", tokenLabel).CornerRadius = UDim.new(0,15)
 
---------------------------------------------------
--- YOUR ORIGINAL FUNCTION (UNTOUCHED)
---------------------------------------------------
+-- Input Box
+local inputBox = Instance.new("TextBox")
+inputBox.Size = UDim2.new(1,-40,0,40)
+inputBox.Position = UDim2.new(0,20,0,120)
+inputBox.PlaceholderText = "Enter amount..."
+inputBox.Text = ""
+inputBox.TextScaled = true
+inputBox.BackgroundColor3 = Color3.fromRGB(35,35,35)
+inputBox.TextColor3 = Color3.new(1,1,1)
+inputBox.Parent = frame
 
-local function setMaxValue(element)
-    element.Text = math.huge
-    element.TextScaled = true
-    
-    element:GetPropertyChangedSignal("Text"):Connect(function()
-        if not tonumber(element.Text) then return end
-        element.Text = math.huge
-    end)
-end
+Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0,15)
 
---------------------------------------------------
--- APPLY FUNCTION
---------------------------------------------------
+-- Add Button
+local addButton = Instance.new("TextButton")
+addButton.Size = UDim2.new(1,-40,0,40)
+addButton.Position = UDim2.new(0,20,0,170)
+addButton.Text = "Add Tokens"
+addButton.TextScaled = true
+addButton.BackgroundColor3 = Color3.fromRGB(0,255,170)
+addButton.TextColor3 = Color3.new(0,0,0)
+addButton.Parent = frame
 
-for _, child in ipairs(mainFrame:GetDescendants()) do
-    if child:IsA("TextLabel") or child:IsA("TextButton") then
-        setMaxValue(child)
-    end
-end
+Instance.new("UICorner", addButton).CornerRadius = UDim.new(0,15)
 
-if tradeTokens:IsA("TextLabel") or tradeTokens:IsA("TextButton") then
-    setMaxValue(tradeTokens)
-end
+-- Button Function
+addButton.MouseButton1Click:Connect(function()
+	local amount = tonumber(inputBox.Text)
+	
+	if amount and amount > 0 then
+		tokens += amount
+		tokenLabel.Text = "Tokens: " .. tokens
+		inputBox.Text = ""
+	end
+end)
